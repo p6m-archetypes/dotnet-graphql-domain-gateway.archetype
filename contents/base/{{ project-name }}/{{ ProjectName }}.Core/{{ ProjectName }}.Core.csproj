@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>{{ ProjectName }}.Core</PackageId>
+    <Description>{{ project-title }} :: Core</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\{{ ProjectName }}.GraphQL\{{ ProjectName }}.GraphQL.csproj" />
+    {%- for service_key in services -%}
+    {% set service = services[service_key] %}
+    <PackageReference Include="{{ service['ProjectName'] }}.Client" Version="1.0.0" />
+    {%- endfor %}
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+  </ItemGroup>
+
+</Project>

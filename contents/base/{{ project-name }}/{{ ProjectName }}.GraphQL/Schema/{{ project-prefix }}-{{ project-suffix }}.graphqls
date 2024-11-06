@@ -1,0 +1,43 @@
+type Query {
+{%- for service_key in services %}
+{%- set service = services[service_key] -%}
+{%- for entity_key in service.model.entities -%}
+{%- set entity = service.model.entities[entity_key] %}
+    {{ entity_key | camel_case }}(id: ID!): {{ entity_key | pascal_case }}!
+    {{ entity_key | camel_case | pluralize }}: [{{ entity_key | pascal_case }}!]!
+{%- endfor %}
+{% endfor -%}
+}
+
+type Mutation {
+{%- for service_key in services %}
+{%- set service = services[service_key] -%}
+{%- for entity_key in service.model.entities -%}
+{%- set entity = service.model.entities[entity_key] %}
+    create{{ entity_key | pascal_case }}(create{{ entity_key | pascal_case }}Input: Create{{ entity_key | pascal_case }}Input!): {{ entity_key | pascal_case }}!
+    update{{ entity_key | pascal_case }}(update{{ entity_key | pascal_case }}Input: Update{{ entity_key | pascal_case }}Input!): {{ entity_key | pascal_case }}!
+    delete{{ entity_key | pascal_case }}(id: ID!): Boolean
+{% endfor %}
+{%- endfor -%}
+}
+{% for service_key in services %}
+{%- set service = services[service_key] -%}
+{%- for entity_key in service.model.entities -%}
+{%- set entity = service.model.entities[entity_key] %}
+
+input Create{{ entity_key | pascal_case }}Input {
+    id: ID
+    name: String!
+}
+
+input Update{{ entity_key | pascal_case }}Input {
+    id: ID!
+    name: String!
+}
+
+type {{ entity_key | pascal_case }} {
+    id: ID!
+    name: String!
+}
+{% endfor %}
+{%- endfor %}

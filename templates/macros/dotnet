@@ -1,0 +1,90 @@
+{% macro core_persistence_constructor_arg(entity_key, entity, model) -%}
+final {{ entity_key | pascal_case }}Repository {{ entity_key | camel_case }}Repository
+{%- endmacro %}
+
+
+{% macro core_gateway_constructor_args() -%}
+{%- for service_key in services -%}
+{% set service = services[service_key] %}
+{{ service['ProjectName'] }}Client {{ service['ProjectName'] | camel_case }}{% if not loop.last%}, {% endif %}
+{%- endfor %}
+{%- endmacro %}
+
+
+{% macro core_implementation_methods(entity_key, entity, model) -%}
+    public {{ entity_key | pascal_case }} Create{{ entity_key | pascal_case }}(Create{{ entity_key | pascal_case }}Input input)
+    {
+        Log.Information("Create {{ entity_key | pascal_case }} {@input}", input);
+        Create{{ entity_key | pascal_case }}Response response = {{ entity_key | camel_case }}Service.Create{{ entity_key | pascal_case }}(new {{ entity_key | pascal_case }}Dto { Name = input.Name }).Result;
+
+        Log.Information("Create response {@response}", response);
+
+        return To{{ entity_key | pascal_case }}(response.{{ entity_key | pascal_case }});
+    }
+
+    private {{ entity_key | pascal_case }} To{{ entity_key | pascal_case }}({{ entity_key | pascal_case }}Dto dto)
+    {
+        return new {{ entity_key | pascal_case }}{Id = Guid.Parse(dto.Id), Name = dto.Name};
+    }
+
+    public List<{{ entity_key | pascal_case }}> Get{{ entity_key | pascal_case | pluralize }}()
+    {
+        Log.Information("Get {{ entity_key | pascal_case | pluralize}}");
+
+        Get{{ entity_key | pascal_case | pluralize}}Response response = {{ entity_key | camel_case }}Service.Get{{ entity_key | pascal_case | pluralize}}(
+            new Get{{ entity_key | pascal_case | pluralize}}Request { StartPage = 1, PageSize = 100 }).Result;
+        Log.Information("response {response}", response);
+        return response.{{ entity_key | pascal_case | pluralize}}.Select(To{{ entity_key | pascal_case }}).ToList();
+    }
+
+    public {{ entity_key | pascal_case }}? Get{{ entity_key | pascal_case }}(Guid id)
+    {
+        Log.Information("Get {{ entity_key | pascal_case }} by ID {id}", id);
+        Get{{ entity_key | pascal_case }}Response response = {{ entity_key | camel_case }}Service.Get{{ entity_key | pascal_case }}(new Get{{ entity_key | pascal_case }}Request { Id = id.ToString() }).Result;
+        return To{{ entity_key | pascal_case }}(response.{{ entity_key | pascal_case }});
+    }
+
+    public {{ entity_key | pascal_case }}? Update{{ entity_key | pascal_case }}(Update{{ entity_key | pascal_case }}Input input)
+    {
+        Log.Information("Update {{ entity_key | pascal_case }} {@input}", input);
+        Update{{ entity_key | pascal_case }}Response response =
+            {{ entity_key | camel_case }}Service.Update{{ entity_key | pascal_case }}(new {{ entity_key | pascal_case }}Dto { Id = input.Id.ToString(), Name = input.Name }).Result;
+
+        return To{{ entity_key | pascal_case }}(response.{{ entity_key | pascal_case }});
+    }
+
+    public bool Delete{{ entity_key | pascal_case }}(Guid id)
+    {
+        return true;
+    }
+
+{%- endmacro %}
+
+{% macro mutation_methods(entity_key, entity, model) -%}
+    public {{ entity_key | pascal_case }} Create{{ entity_key | pascal_case }}(Create{{ entity_key | pascal_case }}Input create{{ entity_key | pascal_case }}Input)
+    {
+        return {{ projectName }}.Create{{ entity_key | pascal_case }}(create{{ entity_key | pascal_case }}Input);
+    }
+
+    public {{ entity_key | pascal_case }} Update{{ entity_key | pascal_case }}(Update{{ entity_key | pascal_case }}Input update{{ entity_key | pascal_case }}Input)
+    {
+        return {{ projectName }}.Update{{ entity_key | pascal_case }}(update{{ entity_key | pascal_case }}Input);
+    }
+
+    public bool Delete{{ entity_key | pascal_case }}(Guid id)
+    {
+        return {{ projectName }}.Delete{{ entity_key | pascal_case }}(id);;
+    }
+{%- endmacro %}
+
+{% macro query_methods(entity_key, entity, model) -%}
+    public List<{{ entity_key | pascal_case }}> {{ entity_key | pascal_case | pluralize }}()
+    {
+        return {{ projectName }}.Get{{ entity_key | pascal_case | pluralize }}();
+    }
+    
+    public {{ entity_key | pascal_case }}? {{ entity_key | pascal_case }}(Guid id)
+    {
+        return {{ projectName }}.Get{{ entity_key | pascal_case }}(id);
+    }
+{%- endmacro %}

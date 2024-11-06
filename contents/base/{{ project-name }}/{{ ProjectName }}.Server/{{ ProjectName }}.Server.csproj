@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>{{ ProjectName }}.Server</PackageId>
+    <Description>{{ project-title }} :: Server</Description>
+  </PropertyGroup>
+
+ <ItemGroup>
+    <PackageReference Include="HotChocolate.AspNetCore" Version="14.0.0" />
+    <PackageReference Include="HotChocolate.ApolloFederation" Version="14.0.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\{{ ProjectName }}.Core\{{ ProjectName }}.Core.csproj" />
+    <ProjectReference Include="..\{{ ProjectName }}.GraphQL\{{ ProjectName }}.GraphQL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\{{ ProjectName }}.GraphQL\Schema\{{ project-name}}.graphqls" 
+             CopyToPublishDirectory="PreserveNewest" CopyToOutputDirectory="PreserveNewest"/>
+  </ItemGroup>
+
+</Project>

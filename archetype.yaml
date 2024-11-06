@@ -1,0 +1,18 @@
+---
+description: ".NET GraphQL Domain Gateway, Namespaced, Modular Microservice"
+authors:
+  [
+    "Maksym Mukhanov"
+  ]
+languages: ["C#"]
+frameworks: ["Hot Chocolate", "GraphQL"]
+tags: ["Modular", "Domain Gateway", "Microservice", "GraphQL"]
+
+requires:
+  archetect: 2.0.0-ALPHA.15
+
+components:
+  org-prompts: git@github.com:p6m-dev/org-prompts.archetype.git
+  java-project-attributes: git@github.com:p6m-dev/java-project-attributes.archetype.git
+  manifests: git@github.com:p6m-dev/platform-application-manifests.archetype.git
+  gitignore: https://github.com/archetect/dot-gitignore.archetype.git

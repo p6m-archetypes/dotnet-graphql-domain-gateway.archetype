@@ -1,0 +1,19 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "local": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Kestrel__Endpoints__Server__Url": "http://localhost:{{ service-port }}",
+        "Kestrel__Endpoints__Management__Url": "http://localhost:{{ management-port }}",
+        {%- for service_key in services -%}
+        {% set service = services[service_key] %}
+        "CoreServices__{{ service['ProjectName'] }}__Url": "http://localhost:{{ service['service-port'] }}"
+        {% endfor %}
+      }
+    }
+  }
+}
