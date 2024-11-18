@@ -1,12 +1,7 @@
-{% macro core_persistence_constructor_arg(entity_key, entity, model) -%}
-final {{ entity_key | pascal_case }}Repository {{ entity_key | camel_case }}Repository
-{%- endmacro %}
-
-
 {% macro core_gateway_constructor_args() -%}
 {%- for service_key in services -%}
 {% set service = services[service_key] %}
-{{ service['ProjectName'] }}Client {{ service['ProjectName'] | camel_case }}{% if not loop.last%}, {% endif %}
+I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not loop.last%}, {% endif %}
 {%- endfor %}
 {%- endmacro %}
 
@@ -14,10 +9,10 @@ final {{ entity_key | pascal_case }}Repository {{ entity_key | camel_case }}Repo
 {% macro core_implementation_methods(entity_key, entity, model) -%}
     public {{ entity_key | pascal_case }} Create{{ entity_key | pascal_case }}(Create{{ entity_key | pascal_case }}Input input)
     {
-        Log.Information("Create {{ entity_key | pascal_case }} {@input}", input);
+        Log.Information("Create {{ entity_key | pascal_case }} {@Input}", input);
         Create{{ entity_key | pascal_case }}Response response = {{ entity_key | camel_case }}Service.Create{{ entity_key | pascal_case }}(new {{ entity_key | pascal_case }}Dto { Name = input.Name }).Result;
 
-        Log.Information("Create response {@response}", response);
+        Log.Information("Create response {@Response}", response);
 
         return To{{ entity_key | pascal_case }}(response.{{ entity_key | pascal_case }});
     }
@@ -39,14 +34,14 @@ final {{ entity_key | pascal_case }}Repository {{ entity_key | camel_case }}Repo
 
     public {{ entity_key | pascal_case }}? Get{{ entity_key | pascal_case }}(Guid id)
     {
-        Log.Information("Get {{ entity_key | pascal_case }} by ID {id}", id);
+        Log.Information("Get {{ entity_key | pascal_case }} by ID {Id}", id);
         Get{{ entity_key | pascal_case }}Response response = {{ entity_key | camel_case }}Service.Get{{ entity_key | pascal_case }}(new Get{{ entity_key | pascal_case }}Request { Id = id.ToString() }).Result;
         return To{{ entity_key | pascal_case }}(response.{{ entity_key | pascal_case }});
     }
 
     public {{ entity_key | pascal_case }}? Update{{ entity_key | pascal_case }}(Update{{ entity_key | pascal_case }}Input input)
     {
-        Log.Information("Update {{ entity_key | pascal_case }} {@input}", input);
+        Log.Information("Update {{ entity_key | pascal_case }} {@Input}", input);
         Update{{ entity_key | pascal_case }}Response response =
             {{ entity_key | camel_case }}Service.Update{{ entity_key | pascal_case }}(new {{ entity_key | pascal_case }}Dto { Id = input.Id.ToString(), Name = input.Name }).Result;
 
@@ -55,7 +50,9 @@ final {{ entity_key | pascal_case }}Repository {{ entity_key | camel_case }}Repo
 
     public bool Delete{{ entity_key | pascal_case }}(Guid id)
     {
-        return true;
+        Log.Information("Delete {{ entity_key | pascal_case }} {Id}", id);
+        Delete{{ entity_key | pascal_case }}Response response = {{ entity_key | camel_case }}Service.Delete{{ entity_key | pascal_case }}(new Delete{{ entity_key | pascal_case }}Request { Id = id.ToString() }).Result;
+        return response.Deleted;
     }
 
 {%- endmacro %}
@@ -66,14 +63,14 @@ final {{ entity_key | pascal_case }}Repository {{ entity_key | camel_case }}Repo
         return {{ projectName }}.Create{{ entity_key | pascal_case }}(create{{ entity_key | pascal_case }}Input);
     }
 
-    public {{ entity_key | pascal_case }} Update{{ entity_key | pascal_case }}(Update{{ entity_key | pascal_case }}Input update{{ entity_key | pascal_case }}Input)
+    public {{ entity_key | pascal_case }}? Update{{ entity_key | pascal_case }}(Update{{ entity_key | pascal_case }}Input update{{ entity_key | pascal_case }}Input)
     {
         return {{ projectName }}.Update{{ entity_key | pascal_case }}(update{{ entity_key | pascal_case }}Input);
     }
 
     public bool Delete{{ entity_key | pascal_case }}(Guid id)
     {
-        return {{ projectName }}.Delete{{ entity_key | pascal_case }}(id);;
+        return {{ projectName }}.Delete{{ entity_key | pascal_case }}(id);
     }
 {%- endmacro %}
 
@@ -87,4 +84,217 @@ final {{ entity_key | pascal_case }}Repository {{ entity_key | camel_case }}Repo
     {
         return {{ projectName }}.Get{{ entity_key | pascal_case }}(id);
     }
+{%- endmacro %}
+
+{% macro integration_test_methods(entity_key, entity, model) -%}
+    [Fact]
+    public async void Test_Create{{ entity_key | pascal_case }}_Success()
+    {
+        //Arrange
+        StubCreate{{ entity_key | pascal_case }}();
+
+        // Act
+        var queryObject = new
+        {
+            query = @"mutation ($create{{ entity_key | pascal_case }}Input: Create{{ entity_key | pascal_case }}Input!) {
+                create{{ entity_key | pascal_case }}(create{{ entity_key | pascal_case }}Input: $create{{ entity_key | pascal_case }}Input)
+                {
+                    id
+                    name
+                }
+            }",
+            variables = new
+            {
+                create{{ entity_key | pascal_case }}Input = new
+                {
+                    name = _name
+                }
+            }
+        };
+        var responseString = await ExecuteQuery(queryObject);
+        testOutputHelper.WriteLine(responseString);
+
+        var jObject = JObject.Parse(responseString);
+        {{ entity_key | pascal_case }}? {{ entity_key | camel_case }} = jObject["data"]?["create{{ entity_key | pascal_case }}"]?.ToObject<{{ entity_key | pascal_case }}>();
+
+        //Assert
+        Assert.NotNull({{ entity_key | camel_case }});
+        Assert.Equal({{ entity_key | camel_case }}.Id.ToString(), _id);
+        Assert.Equal({{ entity_key | camel_case }}.Name, _name);
+    }
+    
+    [Fact]
+    public async void Test_Get{{ entity_key | pascal_case }}_Success()
+    {
+        //Arrange
+        StubGet{{ entity_key | pascal_case }}();
+
+        // Act
+        var queryObject = new
+        {
+            query = @"query ($id: ID!) {
+                {{ entity_key | camel_case }} (id: $id)
+                {
+                    id
+                    name
+                }
+            }",
+            variables = new
+            {
+                id = _id
+            }
+        };
+        var responseString = await ExecuteQuery(queryObject);
+        testOutputHelper.WriteLine(responseString);
+
+        var jObject = JObject.Parse(responseString);
+        {{ entity_key | pascal_case }}? {{ entity_key | camel_case }} = jObject["data"]?["{{ entity_key | camel_case }}"]?.ToObject<{{ entity_key | pascal_case }}>();
+
+        //Assert
+        Assert.NotNull({{ entity_key | camel_case }});
+        Assert.Equal({{ entity_key | camel_case }}.Id.ToString(), _id);
+        Assert.Equal({{ entity_key | camel_case }}.Name, _name);
+    }
+
+
+    [Fact]
+    public async void Test_Get{{ entity_key | pascal_case | pluralize}}_Success()
+    {
+        //Arrange
+        StubGet{{ entity_key | pascal_case | pluralize}}();
+
+        // Act
+        var queryObject = new
+        {
+            query = @"query Get{{ entity_key | pascal_case | pluralize}}{
+                {{ entity_key | camel_case | pluralize}} {
+                    id
+                    name
+                }
+            }"
+        };
+        var responseString = await ExecuteQuery(queryObject);
+        testOutputHelper.WriteLine(responseString);
+
+        var jObject = JObject.Parse(responseString);
+        List<{{ entity_key | pascal_case }}>? {{ entity_key | camel_case | pluralize}} = jObject["data"]?["{{ entity_key | camel_case | pluralize}}"]?.ToObject<List<{{ entity_key | pascal_case }}>>();
+
+        //Assert
+        Assert.NotNull({{ entity_key | camel_case | pluralize}});
+        Assert.Equal(2, {{ entity_key | camel_case | pluralize}}.Count);
+    }
+    
+    [Fact]
+    public async void Test_Update{{ entity_key | pascal_case }}_Success()
+    {
+        //Arrange
+        StubUpdate{{ entity_key | pascal_case }}();
+
+        // Act
+        var queryObject = new
+        {
+            query = @"mutation ($update{{ entity_key | pascal_case }}Input: Update{{ entity_key | pascal_case }}Input!) {
+                update{{ entity_key | pascal_case }}(update{{ entity_key | pascal_case }}Input: $update{{ entity_key | pascal_case }}Input)
+                {
+                    id
+                    name
+                }
+            }",
+            variables = new
+            {
+                update{{ entity_key | pascal_case }}Input = new
+                {
+                    id = _id,
+                    name = _name + "_updated"
+                }
+            }
+        };
+        var responseString = await ExecuteQuery(queryObject);
+        testOutputHelper.WriteLine(responseString);
+
+        var jObject = JObject.Parse(responseString);
+        {{ entity_key | pascal_case }}? {{ entity_key | camel_case }} = jObject["data"]?["update{{ entity_key | pascal_case }}"]?.ToObject<{{ entity_key | pascal_case }}>();
+
+        //Assert
+        Assert.NotNull({{ entity_key | camel_case }});
+        Assert.Equal({{ entity_key | camel_case }}.Id.ToString(), _id);
+        Assert.Equal({{ entity_key | camel_case }}.Name, _name + "_updated");
+    }
+    
+    [Fact]
+    public async void Test_Delete{{ entity_key | pascal_case }}_Success()
+    {
+        //Arrange
+        StubDelete{{ entity_key | pascal_case }}();
+
+        // Act
+        var queryObject = new
+        {
+            query = @"mutation ($id: ID!) {
+                delete{{ entity_key | pascal_case }}(id: $id)
+            }",
+            variables = new
+            {
+                id = _id
+            }
+        };
+        var responseString = await ExecuteQuery(queryObject);
+        testOutputHelper.WriteLine(responseString);
+
+        var jObject = JObject.Parse(responseString);
+        Boolean? deleted = jObject["data"]?["delete{{ entity_key | pascal_case }}"]?.ToObject<Boolean>();
+
+        //Assert
+        Assert.True(deleted);
+    }
+
+    private async Task<string> ExecuteQuery(object? queryObject)
+    {
+        var content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync("/graphql", content);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    private void StubCreate{{ entity_key | pascal_case }}()
+    {
+        _{{ entity_key | camel_case }}ServiceMock.Setup(
+            m => m.Create{{ entity_key | pascal_case }}(It.IsAny<{{ entity_key | pascal_case }}Dto>())).Returns(({{ entity_key | pascal_case }}Dto request) =>
+            Task.FromResult(new Create{{ entity_key | pascal_case }}Response{ {{ entity_key | pascal_case }} = new {{ entity_key | pascal_case }}Dto { Id = _id, Name = request.Name }}));
+    }
+    
+    private void StubGet{{ entity_key | pascal_case }}()
+    {
+        _{{ entity_key | camel_case }}ServiceMock.Setup(
+            m => m.Get{{ entity_key | pascal_case }}(It.IsAny<Get{{ entity_key | pascal_case }}Request>())).Returns((Get{{ entity_key | pascal_case }}Request request) =>
+            Task.FromResult(new Get{{ entity_key | pascal_case }}Response{ {{ entity_key | pascal_case }} = new {{ entity_key | pascal_case }}Dto { Id = _id, Name = _name }}));
+    }
+
+    private void StubGet{{ entity_key | pascal_case | pluralize}}()
+    {
+        _{{ entity_key | camel_case }}ServiceMock.Setup(
+            m => m.Get{{ entity_key | pascal_case | pluralize}}(It.IsAny<Get{{ entity_key | pascal_case | pluralize}}Request>())).Returns((Get{{ entity_key | pascal_case | pluralize}}Request request) =>
+            Task.FromResult(new Get{{ entity_key | pascal_case | pluralize}}Response
+            {
+                {{ entity_key | pascal_case | pluralize}} =
+                {
+                    new {{ entity_key | pascal_case }}Dto { Id = Guid.NewGuid().ToString(), Name = "test-1" },
+                    new {{ entity_key | pascal_case }}Dto { Id = Guid.NewGuid().ToString(), Name = "test-2" }
+                }
+            }));
+    }
+    
+    private void StubUpdate{{ entity_key | pascal_case }}()
+    {
+        _{{ entity_key | camel_case }}ServiceMock.Setup(
+            m => m.Update{{ entity_key | pascal_case }}(It.IsAny<{{ entity_key | pascal_case }}Dto>())).Returns(({{ entity_key | pascal_case }}Dto request) =>
+            Task.FromResult(new Update{{ entity_key | pascal_case }}Response{ {{ entity_key | pascal_case }} = new {{ entity_key | pascal_case }}Dto { Id = _id, Name = request.Name }}));
+    }
+    
+    private void StubDelete{{ entity_key | pascal_case }}()
+    {
+        _{{ entity_key | camel_case }}ServiceMock.Setup(
+            m => m.Delete{{ entity_key | pascal_case }}(It.IsAny<Delete{{ entity_key | pascal_case }}Request>())).Returns((Delete{{ entity_key | pascal_case }}Request request) =>
+            Task.FromResult(new Delete{{ entity_key | pascal_case }}Response{ Deleted = true}));
+    }
+
 {%- endmacro %}

@@ -15,7 +15,5 @@ public class MutationResolver({{ ProjectName }}Core {{ projectName }})
     {%- set entity = service.model.entities[entity_key] %}
     {{ dotnet.mutation_methods(entity_key, service.model.entities[entity_key], service.model) }}
     {% endfor %}
-    {% endfor %}
-
-    
+    {% endfor %}   
 }
