@@ -112,7 +112,7 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
             }
         };
         var responseString = await ExecuteQuery(queryObject);
-        testOutputHelper.WriteLine(responseString);
+        TestOutputHelper.WriteLine(responseString);
 
         var jObject = JObject.Parse(responseString);
         {{ entity_key | pascal_case }}? {{ entity_key | camel_case }} = jObject["data"]?["create{{ entity_key | pascal_case }}"]?.ToObject<{{ entity_key | pascal_case }}>();
@@ -145,7 +145,7 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
             }
         };
         var responseString = await ExecuteQuery(queryObject);
-        testOutputHelper.WriteLine(responseString);
+        TestOutputHelper.WriteLine(responseString);
 
         var jObject = JObject.Parse(responseString);
         {{ entity_key | pascal_case }}? {{ entity_key | camel_case }} = jObject["data"]?["{{ entity_key | camel_case }}"]?.ToObject<{{ entity_key | pascal_case }}>();
@@ -174,7 +174,7 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
             }"
         };
         var responseString = await ExecuteQuery(queryObject);
-        testOutputHelper.WriteLine(responseString);
+        TestOutputHelper.WriteLine(responseString);
 
         var jObject = JObject.Parse(responseString);
         List<{{ entity_key | pascal_case }}>? {{ entity_key | camel_case | pluralize}} = jObject["data"]?["{{ entity_key | camel_case | pluralize}}"]?.ToObject<List<{{ entity_key | pascal_case }}>>();
@@ -210,7 +210,7 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
             }
         };
         var responseString = await ExecuteQuery(queryObject);
-        testOutputHelper.WriteLine(responseString);
+        TestOutputHelper.WriteLine(responseString);
 
         var jObject = JObject.Parse(responseString);
         {{ entity_key | pascal_case }}? {{ entity_key | camel_case }} = jObject["data"]?["update{{ entity_key | pascal_case }}"]?.ToObject<{{ entity_key | pascal_case }}>();
@@ -239,7 +239,7 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
             }
         };
         var responseString = await ExecuteQuery(queryObject);
-        testOutputHelper.WriteLine(responseString);
+        TestOutputHelper.WriteLine(responseString);
 
         var jObject = JObject.Parse(responseString);
         Boolean? deleted = jObject["data"]?["delete{{ entity_key | pascal_case }}"]?.ToObject<Boolean>();
@@ -251,27 +251,27 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
     private async Task<string> ExecuteQuery(object? queryObject)
     {
         var content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json");
-        var response = await _httpClient.PostAsync("/graphql", content);
+        var response = await Client.PostAsync("/graphql", content);
         return await response.Content.ReadAsStringAsync();
     }
 
     private void StubCreate{{ entity_key | pascal_case }}()
     {
-        _{{ entity_key | camel_case }}ServiceMock.Setup(
+        {{ entity_key | pascal_case }}ServiceMock.Setup(
             m => m.Create{{ entity_key | pascal_case }}(It.IsAny<{{ entity_key | pascal_case }}Dto>())).Returns(({{ entity_key | pascal_case }}Dto request) =>
             Task.FromResult(new Create{{ entity_key | pascal_case }}Response{ {{ entity_key | pascal_case }} = new {{ entity_key | pascal_case }}Dto { Id = _id, Name = request.Name }}));
     }
     
     private void StubGet{{ entity_key | pascal_case }}()
     {
-        _{{ entity_key | camel_case }}ServiceMock.Setup(
+        {{ entity_key | pascal_case }}ServiceMock.Setup(
             m => m.Get{{ entity_key | pascal_case }}(It.IsAny<Get{{ entity_key | pascal_case }}Request>())).Returns((Get{{ entity_key | pascal_case }}Request request) =>
             Task.FromResult(new Get{{ entity_key | pascal_case }}Response{ {{ entity_key | pascal_case }} = new {{ entity_key | pascal_case }}Dto { Id = _id, Name = _name }}));
     }
 
     private void StubGet{{ entity_key | pascal_case | pluralize}}()
     {
-        _{{ entity_key | camel_case }}ServiceMock.Setup(
+        {{ entity_key | pascal_case }}ServiceMock.Setup(
             m => m.Get{{ entity_key | pascal_case | pluralize}}(It.IsAny<Get{{ entity_key | pascal_case | pluralize}}Request>())).Returns((Get{{ entity_key | pascal_case | pluralize}}Request request) =>
             Task.FromResult(new Get{{ entity_key | pascal_case | pluralize}}Response
             {
@@ -285,14 +285,14 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
     
     private void StubUpdate{{ entity_key | pascal_case }}()
     {
-        _{{ entity_key | camel_case }}ServiceMock.Setup(
+        {{ entity_key | pascal_case }}ServiceMock.Setup(
             m => m.Update{{ entity_key | pascal_case }}(It.IsAny<{{ entity_key | pascal_case }}Dto>())).Returns(({{ entity_key | pascal_case }}Dto request) =>
             Task.FromResult(new Update{{ entity_key | pascal_case }}Response{ {{ entity_key | pascal_case }} = new {{ entity_key | pascal_case }}Dto { Id = _id, Name = request.Name }}));
     }
     
     private void StubDelete{{ entity_key | pascal_case }}()
     {
-        _{{ entity_key | camel_case }}ServiceMock.Setup(
+        {{ entity_key | pascal_case }}ServiceMock.Setup(
             m => m.Delete{{ entity_key | pascal_case }}(It.IsAny<Delete{{ entity_key | pascal_case }}Request>())).Returns((Delete{{ entity_key | pascal_case }}Request request) =>
             Task.FromResult(new Delete{{ entity_key | pascal_case }}Response{ Deleted = true}));
     }

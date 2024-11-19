@@ -8,20 +8,16 @@ using {{ ProjectName }}.GraphQL.Types;
 {% set service = services[service_key] %}
 using {{ service['ProjectName']}}.API;
 {%- endfor %}
+using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit.Abstractions;
 
 namespace {{ ProjectName }}.IntegrationTests;
 
-[Collection("ApplicationCollection")]
-public class {{ ProjectName }}IT(ITestOutputHelper testOutputHelper, ApplicationFixture applicationFixture)
+public class {{ ProjectName }}Test : BaseIntegrationTest
 {
-    private readonly HttpClient _httpClient = applicationFixture.GetClient();
-    
-    {%- for service_key in services -%}
-    {% set service = services[service_key] %}
-    private readonly Mock<I{{ service['ProjectName']}}> _{{ service['ProjectName'] | camel_case}}Mock = applicationFixture.GetMock{{ service['ProjectName']}}();
-    {%- endfor %}
-
+    public {{ ProjectName }}Test(ITestOutputHelper testOutputHelper, WebApplicationFactory<Program> factory) : base(testOutputHelper, factory)
+    {
+    }
     private readonly string _id = Guid.NewGuid().ToString();
     private readonly string _name = "name_" + Guid.NewGuid();
 
