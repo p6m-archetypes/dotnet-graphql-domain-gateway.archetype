@@ -13,7 +13,6 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
         Create{{ entity_key | pascal_case }}Response response = {{ entity_key | camel_case }}Service.Create{{ entity_key | pascal_case }}(new {{ entity_key | pascal_case }}Dto { Name = input.Name }).Result;
 
         Log.Information("Create response {@Response}", response);
-
         return To{{ entity_key | pascal_case }}(response.{{ entity_key | pascal_case }});
     }
 
@@ -25,9 +24,9 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
     public List<{{ entity_key | pascal_case }}> Get{{ entity_key | pascal_case | pluralize }}()
     {
         Log.Information("Get {{ entity_key | pascal_case | pluralize}}");
-
         Get{{ entity_key | pascal_case | pluralize}}Response response = {{ entity_key | camel_case }}Service.Get{{ entity_key | pascal_case | pluralize}}(
             new Get{{ entity_key | pascal_case | pluralize}}Request { StartPage = 1, PageSize = 100 }).Result;
+
         Log.Information("response {response}", response);
         return response.{{ entity_key | pascal_case | pluralize}}.Select(To{{ entity_key | pascal_case }}).ToList();
     }
@@ -36,6 +35,7 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
     {
         Log.Information("Get {{ entity_key | pascal_case }} by ID {Id}", id);
         Get{{ entity_key | pascal_case }}Response response = {{ entity_key | camel_case }}Service.Get{{ entity_key | pascal_case }}(new Get{{ entity_key | pascal_case }}Request { Id = id.ToString() }).Result;
+        
         return To{{ entity_key | pascal_case }}(response.{{ entity_key | pascal_case }});
     }
 
@@ -52,6 +52,7 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
     {
         Log.Information("Delete {{ entity_key | pascal_case }} {Id}", id);
         Delete{{ entity_key | pascal_case }}Response response = {{ entity_key | camel_case }}Service.Delete{{ entity_key | pascal_case }}(new Delete{{ entity_key | pascal_case }}Request { Id = id.ToString() }).Result;
+        
         return response.Deleted;
     }
 

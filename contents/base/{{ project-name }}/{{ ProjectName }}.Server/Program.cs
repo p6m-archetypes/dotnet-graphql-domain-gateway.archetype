@@ -57,6 +57,7 @@ builder.Services.AddOpenTelemetry()
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation();
         metrics.AddOtlpExporter();
+        metrics.AddPrometheusExporter();
     })
     .WithTracing(tracing =>
     {
@@ -71,7 +72,7 @@ var app = builder.Build();
 
 app.MapGraphQL();
 app.MapGet("/", () => "{{ ProjectName }}");
-
+app.MapPrometheusScrapingEndpoint("/metrics");
 app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
     ResponseWriter = async (context, report) =>
