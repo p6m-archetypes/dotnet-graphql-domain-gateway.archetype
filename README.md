@@ -1,40 +1,37 @@
-# Spring Boot Service Archetype
+# .NET GraphQL Domain Gateway Archetype
 
 ## Usage
 
 To get started, [install archetect](https://github.com/p6m-dev/development-handbook)
 and render this template to your current working directory:
 
-```bash
-archetect render git@github.com:p6m-dev/dotnet-grpc-service.archetype.git
+```sh
+archetect render git@github.com:p6m-dev/dotnet-graphql-domain-gateway.archetype.git
 ```
 
-For information about interacting with the service, refer to the README at the generated
+For information about interacting with the domain gateway, refer to the README at the generated
 project's root.
 
 ## Prompts
 
 When rendering the archetype, you'll be prompted for the following values:
 
-| Property          | Description                                                                                                         | Example               |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `project`         | General name that represents the service domain that is used to set the entity, service, and RPC stub names.        | Shopping Cart         |
-| `suffix`          | Used in conjunction with `project` to set package names.                                                            | Service               |
-| `group-prefix`    | Used in conjunction with `project` to set package names.                                                            | {{ group-id }}        |
-| `team-name`       | Identifies the team that owns the generated project. Used to label published artifacts and in the generated README. | Growth                |
-| `service-port`    | Sets the port used for gRPC traffic                                                                                 | {{ service-port }}    |
-| `management-port` | Sets the port used to monitor the application over HTTP                                                             | {{ management-port }} |
-
-For a list of all derived properties and examples of the property relationships, see [archetype.yml](./archetype.yml).
+| Property          | Description                                                                                                         | Example                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `org-name`        | Organization Name                                                                                                   | afi, cpd, a1p                 |
+| `solution-name`   | Solution Name                                                                                                       | apps, xyz                     |
+| `prefix`          | General name that represents the service domain that is used to set the entity, service, and RPC stub names         | invoice, order, booking       |
 
 ## What's Inside
 
 Features include:
-- Entity Framework Core [EF](https://learn.microsoft.com/en-us/ef/core/)
-- Testcontainers .NET (https://dotnet.testcontainers.org/)
-- Simple CRUD over [gRPC](https://grpc.io/)
-- gRPC stub publication based on the project name
-- Docker image publication to artifactory
-- Load tests using [k6](https://k6.io/) for both HTTP and gRPC calls
-- Application configuration through property files, environment variables, and CLI arguments.
-- Integration with [Tilt](https://tilt.dev/) to support local k8s development
+- Simple CRUD over GraphQL [HotChocolate Server](https://chillicream.com/docs/hotchocolate/v13)
+- Authentication and Authorization setup
+- Integration with gRPC service 
+- Docker image publication to Artifactory
+- Integration tests
+- GitHub Actions SDLC pipelines
+- Kubernetes manifests
+- Open Telemetry Configuration
+- Serilog
+- Heath Checks
