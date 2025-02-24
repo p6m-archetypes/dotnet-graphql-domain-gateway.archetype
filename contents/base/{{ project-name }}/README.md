@@ -24,18 +24,6 @@ This project uses [dotnet](https://learn.microsoft.com/en-us/dotnet/core/tools/d
 | run     | Runs the application from source                   |
 | test    | Runs tests using a test runner                     |
 
-## **Access Token Setup**
-1. Login to JFrog Artifactory
-2. Once logged in, click the `Profile Icon` (top-right corner) > click `Edit Profile` > click `Generate an Identity Token`
-3. Add a descriptive name (ie: PLATFORM_TOKEN-front-end-apps) > click `Next` > copy the `Username` and `Reference Token` (for the next step)
-4. Add the `Username` and `Reference Token` to your local machine environment variables (for Macs, it usually goes to `~/.zshrc` or `~/.zprofile`)
-```bash
-export ARTIFACTORY_USERNAME="...."        # generated 'Username'
-export ARTIFACTORY_IDENTITY_TOKEN="****"  # generated 'Reference Token'
-```
-   - If changes were made to `~/.zshrc`: run `source ~/.zshrc` and then `restart your terminal` to apply the new environment variable changes
-   - If changes were made to `~/.zprofile`: run `source ~/.zprofile` and then `restart your terminal` to apply the new environment variable changes
-
 
 ## Running the Server
 This server accepts connections on the following ports:
