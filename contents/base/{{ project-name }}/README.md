@@ -25,23 +25,17 @@ This project uses [dotnet](https://learn.microsoft.com/en-us/dotnet/core/tools/d
 | test    | Runs tests using a test runner                     |
 
 ## **Access Token Setup**
-1. Login to [JFrog Artifactory](https://p6m.jfrog.io/)
+1. Login to JFrog Artifactory
 2. Once logged in, click the `Profile Icon` (top-right corner) > click `Edit Profile` > click `Generate an Identity Token`
 3. Add a descriptive name (ie: PLATFORM_TOKEN-front-end-apps) > click `Next` > copy the `Username` and `Reference Token` (for the next step)
 4. Add the `Username` and `Reference Token` to your local machine environment variables (for Macs, it usually goes to `~/.zshrc` or `~/.zprofile`)
 ```bash
 export ARTIFACTORY_USERNAME="...."        # generated 'Username'
 export ARTIFACTORY_IDENTITY_TOKEN="****"  # generated 'Reference Token'
-export ARTIFACTORY_TOKEN=$(echo -n "$ARTIFACTORY_USERNAME:$ARTIFACTORY_IDENTITY_TOKEN" | base64)
 ```
    - If changes were made to `~/.zshrc`: run `source ~/.zshrc` and then `restart your terminal` to apply the new environment variable changes
    - If changes were made to `~/.zprofile`: run `source ~/.zprofile` and then `restart your terminal` to apply the new environment variable changes
 
-
-## NuGet with JFrog Artifactory Setup
-```bash
-dotnet nuget add source --name "Artifactory" --username ${ARTIFACTORY_USERNAME} --password ${ARTIFACTORY_IDENTITY_TOKEN} --store-password-in-clear-text "https://p6m.jfrog.io/artifactory/api/nuget/{{ org_name }}-{{ solution-name }}-nuget"
-```
 
 ## Running the Server
 This server accepts connections on the following ports:
