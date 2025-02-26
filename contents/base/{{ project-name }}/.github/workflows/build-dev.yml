@@ -25,7 +25,7 @@ jobs:
       APPLICATION_IMAGE: ${{'{'}}{ vars.ARTIFACTORY_HOSTNAME }}/${{'{'}}{ github.repository_owner }}-docker-local/applications/${{'{'}}{ github.event.repository.name }}-server@${{'{'}}{ needs.build_and_deploy.outputs.digest }}
     secrets:
       SUBGRAPH_PULL_TOKEN: ${{'{'}}{ secrets.SUBGRAPH_PULL_TOKEN }}
-      REPOSITORY_PUSH_TOKEN: ${{'{'}}{ secrets.REPOSITORY_PUSH_TOKEN }}
+      REPOSITORY_PUSH_TOKEN: ${{'{'}}{ secrets.UPDATE_MANIFEST_TOKEN }}
       ARTIFACTORY_USERNAME: ${{'{'}}{ secrets.ARTIFACTORY_USERNAME }}
       ARTIFACTORY_IDENTITY_TOKEN: ${{'{'}}{ secrets.ARTIFACTORY_IDENTITY_TOKEN }}
       PIPELINE_TRIGGER_TOKEN: ${{'{'}}{ secrets.UPDATE_MANIFEST_TOKEN }}
