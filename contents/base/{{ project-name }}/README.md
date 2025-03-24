@@ -7,7 +7,7 @@ Generated from the [.NET gRPC Service Archetype](https://github.com/p6m-dev/dotn
 [[_TOC_]]
 
 ## Prereqs
-Running this service requires .NET 8+ and NuGet to be configured with an Artifactory encrypted key. 
+Running this service requires .NET 9+ and NuGet to be configured with an Artifactory encrypted key. 
 For development, be sure to have Docker installed and running locally.
 
 ## Overview

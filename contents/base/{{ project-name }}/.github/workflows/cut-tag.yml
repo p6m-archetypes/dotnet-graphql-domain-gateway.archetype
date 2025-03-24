@@ -15,5 +15,6 @@ jobs:
       ARTIFACTORY_IDENTITY_TOKEN: ${{'{'}}{ secrets.ARTIFACTORY_IDENTITY_TOKEN }}
       UPDATE_MANIFEST_TOKEN: ${{'{'}}{ secrets.UPDATE_MANIFEST_TOKEN }}
     with:
+      DOTNET_VERSION: "9.0"
       DOCKER_IMAGE_NAME: {{ project-name }}-server
       ARTIFACTORY_REPO: {{ org-name }}-{{ solution-name }}-docker-local/applications
