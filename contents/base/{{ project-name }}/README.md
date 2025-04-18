@@ -2,7 +2,7 @@
 
 **// TODO:** Add description of your project's business function.
 
-Generated from the [.NET gRPC Service Archetype](https://github.com/p6m-dev/dotnet-grpc-service-archetype).
+Generated from the [.NET gRPC Service Archetype](https://github.com/p6m-archetypes/dotnet-grpc-service-archetype).
 
 [[_TOC_]]
 

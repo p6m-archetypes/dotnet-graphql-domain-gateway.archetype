@@ -2,11 +2,11 @@
 
 ## Usage
 
-To get started, [install archetect](https://github.com/p6m-dev/development-handbook)
+To get started, [install archetect](https://github.com/p6m-archetypes/development-handbook)
 and render this template to your current working directory:
 
 ```sh
-archetect render git@github.com:p6m-dev/dotnet-graphql-domain-gateway.archetype.git
+archetect render git@github.com:p6m-archetypes/dotnet-graphql-domain-gateway.archetype.git
 ```
 
 For information about interacting with the domain gateway, refer to the README at the generated
