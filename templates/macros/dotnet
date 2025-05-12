@@ -1,8 +1,10 @@
 {% macro core_gateway_constructor_args() -%}
+{% if use-default-service == false %}
 {%- for service_key in services -%}
 {% set service = services[service_key] %}
 I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not loop.last%}, {% endif %}
 {%- endfor %}
+{% endif %}
 {%- endmacro %}
 
 
@@ -249,13 +251,6 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
         Assert.True(deleted);
     }
 
-    private async Task<string> ExecuteQuery(object? queryObject)
-    {
-        var content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json");
-        var response = await Client.PostAsync("/graphql", content);
-        return await response.Content.ReadAsStringAsync();
-    }
-
     private void StubCreate{{ entity_key | pascal_case }}()
     {
         {{ entity_key | pascal_case }}ServiceMock.Setup(
@@ -296,6 +291,48 @@ I{{ service['ProjectName'] }} {{ service['ProjectName'] | camel_case }}{% if not
         {{ entity_key | pascal_case }}ServiceMock.Setup(
             m => m.Delete{{ entity_key | pascal_case }}(It.IsAny<Delete{{ entity_key | pascal_case }}Request>())).Returns((Delete{{ entity_key | pascal_case }}Request request) =>
             Task.FromResult(new Delete{{ entity_key | pascal_case }}Response{ Deleted = true}));
+    }
+
+{%- endmacro %}
+
+{% macro core_implementation_methods_defaults(entity_key, entity, model) -%}
+    public {{ entity_key | pascal_case }} Create{{ entity_key | pascal_case }}(Create{{ entity_key | pascal_case }}Input input)
+    {
+        Log.Information("Create {{ entity_key | pascal_case }} {@input}", input);
+
+        return new {{ entity_key | pascal_case }}{Id = Guid.NewGuid(), Name = input.Name};
+    }
+
+    public List<{{ entity_key | pascal_case }}> Get{{ entity_key | pascal_case | pluralize }}()
+    {
+        Log.Information("Get {{ entity_key | pascal_case | pluralize}}");
+
+        return
+        [
+            new {{ entity_key | pascal_case }}{Id = Guid.NewGuid(), Name = "Test 1"},
+            new {{ entity_key | pascal_case }}{Id = Guid.NewGuid(), Name = "Test 2"}
+        ];
+    }
+
+    public {{ entity_key | pascal_case }}? Get{{ entity_key | pascal_case }}(Guid id)
+    {
+        Log.Information("Get {{ entity_key | pascal_case }} by ID {id}", id);
+
+        return new {{ entity_key | pascal_case }}{Id = id, Name = "Test 1"};
+    }
+
+    public {{ entity_key | pascal_case }}? Update{{ entity_key | pascal_case }}(Update{{ entity_key | pascal_case }}Input input)
+    {
+        Log.Information("Update {{ entity_key | pascal_case }} input={@input}", input);
+
+        return new {{ entity_key | pascal_case }}{Id = input.Id, Name = input.Name};
+    }
+
+    public bool Delete{{ entity_key | pascal_case }}(Guid id)
+    {
+        Log.Information("Delete {{ entity_key | pascal_case }} {Id}", id);
+        
+        return true;
     }
 
 {%- endmacro %}

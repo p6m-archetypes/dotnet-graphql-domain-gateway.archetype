@@ -16,3 +16,4 @@ components:
   java-project-attributes: git@github.com:p6m-archetypes/java-project-attributes.archetype.git
   manifests: git@github.com:p6m-archetypes/platform-application-manifests.archetype.git
   gitignore: https://github.com/archetect/dot-gitignore.archetype.git
+  grpc-services-integration: git@github.com:p6m-archetypes/grpc-services-integration.archetype.git

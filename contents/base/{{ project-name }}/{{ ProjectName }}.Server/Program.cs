@@ -3,11 +3,13 @@ using {{ ProjectName }}.Core;
 using {{ ProjectName }}.GraphQL.Types;
 using {{ ProjectName }}.Server.GraphQL;
 using {{ ProjectName }}.Server.GraphQL.Resolvers;
+{% if use-default-service == false %}
 {%- for service_key in services -%}
 {% set service = services[service_key] %}
 using {{ service['ProjectName'] }}.API;
 using {{ service['ProjectName'] }}.Client;
 {% endfor %}
+{% endif %}
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -41,10 +43,12 @@ builder.Services
     .AddErrorFilter<GraphQlErrorFilter>()
     ;
 
+{% if use-default-service == false %}
 {%- for service_key in services -%}
 {% set service = services[service_key] %}
 builder.Services.AddSingleton<I{{ service['ProjectName'] }}>({{ service['ProjectName'] }}Client.Of(builder.Configuration["CoreServices:{{ service['ProjectName'] }}:Url"]));
 {% endfor %}
+{% endif %}
 builder.Services.AddSingleton<{{ ProjectName }}Core>();
 
 builder.Services.AddHealthChecks();

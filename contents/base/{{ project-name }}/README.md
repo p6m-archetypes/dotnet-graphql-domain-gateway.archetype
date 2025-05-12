@@ -12,7 +12,6 @@ For development, be sure to have Docker installed and running locally.
 
 ## Overview
 
-
 ## Build System
 This project uses [dotnet](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet#general) as its build system. Common goals include
 
@@ -24,60 +23,34 @@ This project uses [dotnet](https://learn.microsoft.com/en-us/dotnet/core/tools/d
 | run     | Runs the application from source                   |
 | test    | Runs tests using a test runner                     |
 
-
-## Running the Server
-This server accepts connections on the following ports:
-- {{ service-port }}: used for application gRPC Service traffic.
-- {{ management-port }}: used to monitor the application over HTTP (see [Actuator endpoints](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints)).
-- {{ debug-port }}: remote debugging port
-
-
-Next, start the server locally or using Docker. You can verify things are up and running by looking at the [/health](http://localhost:{{ management-port }}/health) endpoint:
+## Build 
 ```bash
-curl localhost:{{ management-port }}/health
+dotnet build
 ```
 
-You can try to create an entity using a gRPC client, like [grpcurl](https://github.com/fullstorydev/grpcurl) (CLI) or [grpcui](https://github.com/fullstorydev/grpcui) (GUI).
-For example,
-
-Create{{ ProjectPrefix }}
-```bash
-grpcurl -plaintext -d '{"name": "test"}' localhost:{{ service-port }} \
-    {{ root_package }}.grpc.{{ ProjectPrefix }}{{ ProjectSuffix }}/Create{{ ProjectPrefix }}
-```
-Get{{ ProjectPrefix }}s
-```bash
-grpcurl -plaintext -d '{"start_page": "1", "page_size": "5"}' localhost:{{ service-port }} \
-    {{ root_package }}.grpc.{{ ProjectPrefix }}{{ ProjectSuffix }}/Get{{ ProjectPrefix }}s
-```
-{% if persistence != 'None' %}
-## DB migrations
-### Create DB Migration
-```bash
-dotnet ef migrations add InitialCreation  --project {{ ProjectName }}.Persistence -s {{ ProjectName }}.Server
-```
-
-### Apply DB migrations
-```bash
-dotnet ef database update --project {{ ProjectName }}.Persistence -s {{ ProjectName }}.Server
-```
-{% endif %}
-
-## Local
-Run Database dependencies with `docker-compose`
-```bash 
-docker-compose up -d
-```
-
+## Run the Server
 From the project root, run the server:
 ```bash
 dotnet run --project {{ ProjectName }}.Server
 ```
+This server accepts connections on the following ports:
+- {{ service-port }}: used for application gRPC Service traffic
+- {{ management-port }}: used to monitor the application over HTTP
 
+### Nitro GraphQL Playground
+[Nitro GraphQL Playground](http://localhost:{{ service-port }}/graphql)
+Chocolate GraphQL Server provides Nitro as GraphQL Playground to execute query/mutation to server.
 
-Shutdown local database
-```bash 
-docker-compose down
+## Tests
+```bash
+dotnet test
+```
+
+## Management Server
+### Health Checks
+You can verify things are up and running by looking at the [/health](http://localhost:{{ management-port }}/health) endpoint:
+```bash
+curl localhost:{{ management-port }}/health
 ```
 
 ### Metrics
@@ -88,7 +61,7 @@ You can verify things are up and running by looking at the [/metrics](http://loc
 curl localhost:{{ management-port }}/metrics
 ```
 
-## Modules (UPDATE)
+## Modules
 
 | Directory                                                                 | Description                                                                                |
 |---------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
